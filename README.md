@@ -19,6 +19,7 @@
 - *name:* Назва арт-об’єкта (String).
 - *yearOfCreation:* Рік створення арт-об’єкта (String).
 - *artist:* Автор арт-об’єкта (екземпляр класу Artist).
+- *ArtObject(int id, string name, int? yearOfCreation, Artist artist):* Конструктор класу
 - *infoArtObject():* Абстрактний метод для виведення інформації про арт-об’єкт.
 
 ### **Sculpture (Наслідується від ArtObject)**
@@ -26,6 +27,7 @@
 - *weight:* Вага скульптури (float).
 - *material:* Матеріал скульптури (Enum Materials).
 - *creation:* Метод створення скульптури (Enum MethodOfCreation).
+- *Sculpture(int id, string name, int? yearOfCreation, Artist artist, float height, float weight, Materials material, MethodOfCreation creation):* Конструктор класу
 - *infoSculpture():* Метод для виведення інформації про скульптуру.
 
 #### Enums
@@ -36,6 +38,7 @@
 - *canvaSize:* Розмір полотна (String).
 - *stylePic:* Стиль живопису (Enum Style).
 - *material:* Матеріал картини (Enum Paint).
+- *Painting(int id, string name, int? yearOfCreation, Artist artist, string canvaSize, Style stylePic, Paint material):*  Конструктор класу
 - *infoPainting():* Метод для виведення інформації про картину.
 
 #### Enums
