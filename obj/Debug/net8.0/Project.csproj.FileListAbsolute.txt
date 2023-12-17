@@ -1,0 +1,15 @@
+C:\Users\Owner\Desktop\labs\ООП\Project\bin\Debug\net8.0\Project.exe
+C:\Users\Owner\Desktop\labs\ООП\Project\bin\Debug\net8.0\Project.deps.json
+C:\Users\Owner\Desktop\labs\ООП\Project\bin\Debug\net8.0\Project.runtimeconfig.json
+C:\Users\Owner\Desktop\labs\ООП\Project\bin\Debug\net8.0\Project.dll
+C:\Users\Owner\Desktop\labs\ООП\Project\bin\Debug\net8.0\Project.pdb
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.AssemblyInfoInputs.cache
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.AssemblyInfo.cs
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.csproj.CoreCompileInputs.cache
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.sourcelink.json
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.dll
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\refint\Project.dll
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.pdb
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\Project.genruntimeconfig.cache
+C:\Users\Owner\Desktop\labs\ООП\Project\obj\Debug\net8.0\ref\Project.dll

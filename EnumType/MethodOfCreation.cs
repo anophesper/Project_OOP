@@ -1,4 +1,4 @@
-﻿namespace Project.Enum
+﻿namespace Project.EnumType
 {
     public enum MethodOfCreation
     {

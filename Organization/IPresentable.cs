@@ -1,18 +1,14 @@
-﻿using System.Buffers;
-using Project.Object;
+﻿using Project.Object;
 
 namespace Project.Organization
 {
     public interface IPresentable
     {
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public Owner owner { get; set; }
-        public List<ArtObject>? ArtWorks { get; set; }
-
-        public void info()
-        {
-            throw new NotImplementedException();
-        }
+        string Name { get; set; }
+        string Address { get; set; }
+        Owner Owner { get; set; }
+        List<ArtObject>? ArtWorks { get; set; }
+        void info();
+        bool AddArtwork(ArtObject artwork);
     }
 }
