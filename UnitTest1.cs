@@ -10,7 +10,7 @@ namespace TestProject
     public class UnitTest1
     {
         [TestMethod]
-        public void Sculpture_CreateArtObject_Success()
+        public void Artist_CreateArtObject_Sculpture_Success()
         {
             // Arrange
             Artist artist = new Artist("Test Artist", "Test Surname", 1980);
@@ -28,7 +28,7 @@ namespace TestProject
         }
 
         [TestMethod]
-        public void Sculpture_CreateArtObject_Failure()
+        public void Artist_CreateArtObject_Sculpture_Failure()
         {
             // Arrange
             Artist artist = new Artist("Test Artist", "Test Surname", 1980);
@@ -45,7 +45,7 @@ namespace TestProject
         }
 
         [TestMethod]
-        public void Painting_CreateArtObject_Success()
+        public void Artist_CreateArtObject_Painting_Success()
         {
             // Arrange
             Artist artist = new Artist("Test Artist", "Test Surname", 1980);
@@ -62,7 +62,7 @@ namespace TestProject
         }
 
         [TestMethod]
-        public void Painting_CreateArtObject_Failure()
+        public void Artist_CreateArtObject_Painting_Failure()
         {
             // Arrange
             Artist artist = new Artist("Test Artist", "Test Surname", 1980);
@@ -270,6 +270,5 @@ namespace TestProject
             // Assert
             Assert.IsFalse(result);
         }
-
     }
 }
