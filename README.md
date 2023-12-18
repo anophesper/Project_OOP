@@ -51,8 +51,11 @@
 - *birthYear:* Рік народження артиста (DateTime).
 - *deathYear:* Рік смерті артиста (DateTime).
 - *ArtObjects:* Список арт-об’єктів, створених артистом (List<ArtObject>).
+- *Artist(string name, string surname, int birthYear, int? deathYear = null):* Конструктор
 - *infoArtist():* Метод для виведення інформації про артиста.
-- *createArtObject():* Метод для створення нового арт-об’єкта.
+- *createArtObject(int id, string name, int? yearOfCreation, Artist artist, float height, float weight, Materials material, MethodOfCreation creation):* Метод для створення нового арт-об’єкта (скульптура).
+- *createArtObject(int id, string name, int? yearOfCreation, Artist artist, string canvaSize, Style stylePic, Paint material):* Метод для створення нового арт-об’єкта (картина).
+
 
 ### **Exhibition**
 - *name:* Назва виставки (String).
@@ -60,19 +63,19 @@
 - *dateEnd:* Дата закінчення виставки (DateTime).
 - *place:* Місце проведення виставки (екземпляр, що реалізує IPresentable).
 - *exhibitionObject:* Список арт-об’єктів на виставці (List<ArtObject>).
+- *Exhibition(string name, DateTime startDate, DateTime endDate, IPresentable place, List<ArtObject>? exhibitionObjects):* Конструктор
 - *infoExhibition():* Метод для виведення інформації про виставку.
-- *AddArtObject(object IPresentable, name: string):* Метод для додавання арт-об’єкта до виставки.
-- *DeleteArtObject(object IPresentable, name: string):* Метод для видалення арт-об’єкта з виставки.
-- *ChangeDate():* Метод для зміни дати виставки.
+- *AddArtObject(ArtObject newArtObject):* Метод для додавання арт-об’єкта до виставки.
+- *ChangeDate(DateTime newStartDate, DateTime newEndDate):* Метод для зміни дати виставки.
 
 ### **Curator**
 - *name:* Ім'я куратора (String).
 - *surname:* Прізвище куратора (String).
 - *age:* Вік куратора (int).
 - *Exhibitions:* Список виставок, якими керує куратор (List<Exhibition>).
+- *Curator(string name, string surname, int age):* Конструктор
 - *infoCurator():* Метод для виведення інформації про куратора.
-- *AddExhibition():* Метод для додавання нової виставки.
-- *DeleteExhibition():* Метод для видалення виставки.
+- *AddExhibition(string name, DateTime start, DateTime end, IPresentable place, List<ArtObject>? artworks):* Метод для додавання нової виставки.
 
 ### **IPresentable (Інтерфейс)**
 - *name:* Назва місця (String).
@@ -80,19 +83,22 @@
 - *owner:* Власник місця (екземпляр класу Owner).
 - *artworks:* Список арт-об’єктів у місці (List<ArtObject>).
 - *info():* Метод для виведення інформації про місце.
+- *AddArtwork9ArtObject artwork):* метод для додавання нових арт об'єктів до вже існуючого місця проведення
 
 ### **Owner**
 - *name:* Ім'я власника (String).
 - *surname:* Прізвище власника (String).
 - *age:* Вік власника (int).
 - *place:* Список місць, що належать власникові (List<IPresentable>).
+- *Owner(string name, string surname, int age):* Конструктор
 - *infoOwner():* Метод для виведення інформації про власника.
-- *AddPlace():* Метод для додавання нового місця власникові.
-- *DeletePlace():* Метод для видалення місця власника.
+- *AddPlace(string name, string address, Owner owner, List<ArtObject>? artworks, bool isMuseum):* Метод для додавання нового місця власникові.
 
 ### **Museum (Наслідується від інтерфейсу IPresentable)**
 - *info():* Override метод для виведення інформації про музей.
+- *AddArtwork9ArtObject artwork):* метод для додавання нових арт об'єктів до вже існуючого місця проведення
 
 ### **Gallery (Наслідується від інтерфейсу IPresentable)**
 - *info():* Override метод для виведення інформації про галерею.
+- *AddArtwork9ArtObject artwork):* метод для додавання нових арт об'єктів до вже існуючого місця проведення
 
