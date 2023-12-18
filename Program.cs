@@ -13,6 +13,86 @@ namespace Project
         public static List<Curator> curators = new List<Curator>();
         public static List<Exhibition> exhibitions = new List<Exhibition>();
 
+        //власні делегати та івенти
+        public delegate void CreateDelegate();   //приєднаються методи для мануального створення об'єктів
+        public static event CreateDelegate CreateEvent;
+
+        public delegate void GenerateDelegate(int number);  //приєднаються методи для генерації об'єктів програмою
+        public static event GenerateDelegate GenerateEvent;
+
+        //стандартні делегати для виводу інформації про об'єкт
+        static Action infoArtObject = () =>
+        {
+            Console.Clear();
+            if (artObjects.Count == 0)
+                Console.WriteLine("No art objects found.");
+            foreach (var artObject in artObjects)
+            {
+                artObject.infoArtObject();
+                Console.WriteLine();
+            }
+        };
+
+        static Action infoArtist = () =>
+        {
+            Console.Clear();
+            if (artists.Count == 0)
+                Console.WriteLine("No artists found.");
+            foreach (var artist in artists)
+            {
+                artist.infoArtist();
+                Console.WriteLine("");
+            }
+        };
+
+        static Action infoVenue = () =>
+        {
+            Console.Clear();
+            if (venues.Count == 0)
+                Console.WriteLine("No venues found.");
+            foreach (var venue in venues)
+            {
+                venue.info();
+                Console.WriteLine("");
+            }
+        };
+
+        static Action infoOwner = () =>
+        {
+            Console.Clear();
+            if (owners.Count == 0)
+                Console.WriteLine("No owners found.");
+            foreach (var owner in owners)
+            {
+                owner.infoOwner();
+                Console.WriteLine("");
+            }
+        };
+
+        static Action infoExhibition = () =>
+        {
+            Console.Clear();
+            if (exhibitions.Count == 0)
+                Console.WriteLine("No exibitions found.");
+            foreach (var exibition in exhibitions)
+            {
+                exibition.infoExhibition();
+                Console.WriteLine();
+            }
+        };
+
+        static Action infoCurator = () =>
+        {
+            Console.Clear();
+            if (curators.Count == 0)
+                Console.WriteLine("No curators found.");
+            foreach (var curator in curators)
+            {
+                curator.infoCurator();
+                Console.WriteLine();
+            }
+        };
+
         public static void Main(string[] args)
         {
             while (true)
@@ -31,7 +111,7 @@ namespace Project
                             else if (creationMethod == "2") {
                                 Console.WriteLine("Enter the number of art objects to create:");
                                 int numberOfArtObjects = Convert.ToInt32(Console.ReadLine());
-                                GenerateArtObjectsAndArtists(numberOfArtObjects, numberOfArtObjects);
+                                GenerateArtObjectsAndArtists(numberOfArtObjects);
                                 break;
                             }
                             else
@@ -39,22 +119,10 @@ namespace Project
                         }
                         break;
                     case 2:
-                        Console.Clear();
-                        if (artObjects.Count == 0)
-                            Console.WriteLine("No art objects found.");
-                        foreach (var artObject in artObjects) {
-                            artObject.infoArtObject();
-                            Console.WriteLine();
-                        }
+                        infoArtObject();
                         break;
                     case 3:
-                        Console.Clear();
-                        if (artists.Count == 0)
-                            Console.WriteLine("No artists found.");
-                        foreach (var artist in artists) {
-                            artist.infoArtist();
-                            Console.WriteLine("");
-                        }
+                        infoArtist();
                         break;
                     case 4:
                         Console.Clear();
@@ -79,23 +147,10 @@ namespace Project
                         }
                         break;
                     case 5:
-                        Console.Clear();
-                        if (venues.Count == 0)
-                            Console.WriteLine("No venues found.");
-                        foreach (var venue in venues){
-                            venue.info();
-                            Console.WriteLine("");
-                        }
+                        infoVenue();
                         break;
                     case 6:
-                        Console.Clear();
-                        if (owners.Count == 0)
-                            Console.WriteLine("No owners found.");
-                        foreach (var owner in owners)
-                        {
-                            owner.infoOwner();
-                            Console.WriteLine("");
-                        }
+                        infoOwner();
                         break;
                     case 7:
                         Console.Clear();
@@ -124,28 +179,59 @@ namespace Project
                         }
                         break;
                     case 9:
-                        Console.Clear();
-                        if (exhibitions.Count == 0)
-                            Console.WriteLine("No exibitions found.");
-                        foreach (var exibition in exhibitions)
-                        {
-                            exibition.infoExhibition();
-                            Console.WriteLine();
-                        }
+                        infoExhibition();
                         break;
                     case 10:
-                        Console.Clear();
-                        if (curators.Count == 0)
-                            Console.WriteLine("No curators found.");
-                        foreach (var curator in curators)
-                        {
-                            curator.infoCurator();
-                            Console.WriteLine();
-                        }
+                        infoCurator();
                         break;
                     case 11:
                         Console.Clear();
                         ModifyExhibition();
+                        break;
+                    case 12:
+                        Console.Clear();
+                        Console.WriteLine("How do you want to create exhibition? Enter 1 for manual creation, 2 for random creation:");
+                        while (true)
+                        {
+                            string creationMethod = Console.ReadLine();
+                            if (creationMethod == "1")
+                            {
+                                // Приєднайте потрібні методи до події
+                                CreateEvent += () => Console.WriteLine("Add art object");
+                                CreateEvent += CreateArtObject;
+                                CreateEvent += () => Console.WriteLine("Add venue");
+                                CreateEvent += AddPlace;
+                                CreateEvent += () => Console.WriteLine("Add exhibition");
+                                CreateEvent += AddExhibition;
+
+                                //викликаємо івент
+                                CreateEvent();
+
+                                //видаляємо методи з івенту, щоб вони не були викликані знову пізніше
+                                CreateEvent -= CreateArtObject;
+                                CreateEvent -= AddPlace;
+                                CreateEvent -= AddExhibition;
+                                break;
+                            }
+                            else if (creationMethod == "2")
+                            {
+                                //приєдеуємо потрібні методи до події
+                                GenerateEvent += GenerateArtObjectsAndArtists;
+                                GenerateEvent += AddRandomPlaces;
+                                GenerateEvent += GenerateExhibitions;
+
+                                //викликаємо івент
+                                GenerateEvent(2); //додаємо два художника (шість арт об'єктів), додаємо два місця проведення та дві виставки
+
+                                //видаляємо методи з івенту, щоб вони не були викликані знову пізніше
+                                GenerateEvent -= GenerateArtObjectsAndArtists;
+                                GenerateEvent -= AddRandomPlaces;
+                                GenerateEvent -= GenerateExhibitions;
+                                break;
+                            }
+                            else
+                                Console.WriteLine("Invalid input. Please enter 1 for manual creation or 2 for random creation.");
+                        }
                         break;
                     case 0:
                         Console.Clear();
@@ -161,7 +247,7 @@ namespace Project
         {
             Console.WriteLine("\n1. Add art object.\n2. View all art objects in list. \n3. View all artists in list.\n4. Add venue" +
                 "\n5. View venues\n6. View owners of venues\n7. Add to venue new artobject\n8. Add new Exhibition\n9. View all exhibitions" +
-                "\n10. View all curators\n11.Edit Exhibition\n0. End work.\n");
+                "\n10. View all curators\n11. Edit Exhibition\n12. Add all for Exhibition (Delegate)\n0. End work.\n");
             int choice;
             while (!int.TryParse(Console.ReadLine(), out choice))
                 Console.WriteLine("Sorry, it's not a number.");
@@ -172,258 +258,289 @@ namespace Project
         //метод для створення нового витвору мистецтва
         public static void CreateArtObject()
         {
-            try
+            Console.WriteLine("Enter the number of art objects you want to create: ");
+            int numArtObjects;
+            while (true)
             {
-                //обираємо який арт об'єкт створювати
-                string choose = "";
-                while (choose != "1" && choose != "2")
-                {
-                    Console.WriteLine("Choose the type of the art object (1 for Painting or 2 for Sculpture): ");
-                    choose = Console.ReadLine();
-                    if (choose == "1" || choose == "2") 
-                        break;
-                    else
-                        Console.WriteLine("Incorrect number, choose 1 or 2");
-                }
-                
-                int lastId = artObjects.Count > 0 ? artObjects.Max(artObject => artObject.Id) : -1; //генеруємо унікальне id
-                int id = lastId + 1;
+                string numArtObjectsInput = Console.ReadLine();
+                if (int.TryParse(numArtObjectsInput, out numArtObjects) && numArtObjects > 0)
+                    break;
+                else
+                    Console.WriteLine("Number must be a positive integer");
+            }
 
-                //запрашуємо дані для об'єкта та перевіряємо їх на валідність
-                string name;
-                while (true)
+            for (int i = 0; i < numArtObjects; i++)
+            {
+                try
                 {
-                    Console.WriteLine("Enter the name of the art object: ");
-                    name = Console.ReadLine();
-                    if (!string.IsNullOrEmpty(name))
-                        break;
-                    else
-                        Console.WriteLine("Name can't be null");
-                }
-
-                int? yearOfCreation = null;
-                while (true)
-                {
-                    Console.WriteLine("Enter the year of creation of the art object (or leave it blank if unknown): ");
-                    string? yearOfCreationInput = Console.ReadLine();
-                    if (string.IsNullOrEmpty(yearOfCreationInput))
-                        break;
-                    else
+                    //обираємо який арт об'єкт створювати
+                    string choose = "";
+                    while (choose != "1" && choose != "2")
                     {
-                        try
-                        {
-                            if (!int.TryParse(yearOfCreationInput, out int parsedYear))
-                                throw new Exception("Year must be a number");
-                            yearOfCreation = parsedYear;
-                            int currentYear = DateTime.Now.Year;
-                            if (yearOfCreation < 0 || yearOfCreation > currentYear)
-                                throw new Exception("Year can't be < 0 or > current year");
+                        Console.WriteLine("Choose the type of the art object (1 for Painting or 2 for Sculpture): ");
+                        choose = Console.ReadLine();
+                        if (choose == "1" || choose == "2")
                             break;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        else
+                            Console.WriteLine("Incorrect number, choose 1 or 2");
                     }
-                }
 
-                //обираємо митця зі списку або додаємо нового
-                Artist artist;
-                while (true)
-                {
-                    Console.WriteLine("Please select the number of the artist or enter 0 to add a new one:");
-                    for (int i = 0; i < artists.Count; i++)
-                        Console.WriteLine($"{i + 1}. {artists[i].Name} {artists[i].Surname}");
+                    int lastId = artObjects.Count > 0 ? artObjects.Max(artObject => artObject.Id) : -1; //генеруємо унікальне id
+                    int id = lastId + 1;
 
-                    int input = Convert.ToInt32(Console.ReadLine());
-                    if (input == 0)
+                    //запрашуємо дані для об'єкта та перевіряємо їх на валідність
+                    string name;
+                    while (true)
                     {
-                        string nameArt;
-                        while (true)
-                        {
-                            Console.Write("Enter the name: ");
-                            nameArt = Console.ReadLine();
-                            if (!nameArt.Any(char.IsDigit) && nameArt.Length >= 2)
-                                break;
-                            Console.WriteLine("Name cannot contain digits and must be at least two characters long");
-                        }
+                        Console.WriteLine("Enter the name of the art object: ");
+                        name = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(name))
+                            break;
+                        else
+                            Console.WriteLine("Name can't be null");
+                    }
 
-                        string surname;
-                        while (true)
+                    int? yearOfCreation = null;
+                    while (true)
+                    {
+                        Console.WriteLine("Enter the year of creation of the art object (or leave it blank if unknown): ");
+                        string? yearOfCreationInput = Console.ReadLine();
+                        if (string.IsNullOrEmpty(yearOfCreationInput))
+                            break;
+                        else
                         {
-                            Console.Write("Enter the surname: ");
-                            surname = Console.ReadLine();
-                            if (!surname.Any(char.IsDigit) && surname.Length >= 2)
-                                break;
-                            Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
-                        }
-
-                        int birthYear;
-                        while (true)
-                        {
-                            Console.Write("Enter the birth year: ");
-                            string birthYearInput = Console.ReadLine();
-                            if (Int32.TryParse(birthYearInput, out birthYear) && birthYear >= 0)
-                                break;
-                            Console.WriteLine("Birth year must be a non-negative integer");
-                        }
-
-                        int? deathYear = null;
-                        while (true)
-                        {
-                            Console.Write("Enter the death year (or leave it blank if the artist is still alive): ");
-                            string deathYearInput = Console.ReadLine();
-                            if (string.IsNullOrEmpty(deathYearInput))
-                                break;
-                            else
+                            try
                             {
-                                if (Int32.TryParse(deathYearInput, out int tempDeathYear) && tempDeathYear >= birthYear)
-                                {
-                                    deathYear = tempDeathYear;
-                                    break;
-                                }
-                                Console.WriteLine("Death year must be a non-negative integer and not less than the birth year");
+                                if (!int.TryParse(yearOfCreationInput, out int parsedYear))
+                                    throw new Exception("Year must be a number");
+                                yearOfCreation = parsedYear;
+                                int currentYear = DateTime.Now.Year;
+                                if (yearOfCreation < 0 || yearOfCreation > currentYear)
+                                    throw new Exception("Year can't be < 0 or > current year");
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
                             }
                         }
-
-                        Artist newArtist = new Artist(nameArt, surname, birthYear, deathYear);
-                        artists.Add(newArtist);
-                        Console.WriteLine("Artist was added");
-                        artist = newArtist;
-                        break;
                     }
-                    else if (input > 0 && input <= artists.Count)
-                    {
-                        artist = artists[input - 1];
-                        break;
-                    }
-                    else
-                        Console.WriteLine("Invalid input. Please try again.");
-                }
 
-                //характеристики для картини
-                if (choose == "1")
-                {
-                    Console.WriteLine("Enter the canvas size of the painting: ");
-                    string canvasSize = Console.ReadLine();
-
-                    //вивід можливих варіантів для обрання стилю
-                    Console.WriteLine("\nStyle:");
-                    foreach (Style style in Enum.GetValues(typeof(Style)))
-                        Console.WriteLine(style);
-
-                    Console.WriteLine("\nEnter the style of the painting:");
-                    Style stylePic = Style.None;
-                    string userStyle;
-
+                    //обираємо митця зі списку або додаємо нового
+                    Artist artist;
                     while (true)
                     {
-                        userStyle = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(userStyle) || (Enum.TryParse(userStyle, out stylePic)))
-                            break;
-                        Console.WriteLine("Invalid style. Please enter a valid style from the list.");
-                    }
+                        Console.WriteLine("Please select the number of the artist or enter 0 to add a new one:");
+                        for (int j = 0; j < artists.Count; j++)
+                            Console.WriteLine($"{j + 1}. {artists[j].Name} {artists[j].Surname}");
 
-                    //вивід можливих варіантів для обрання матеріалів
-                    Console.WriteLine("\nMaterial:");
-                    foreach (Paint paint in Enum.GetValues(typeof(Paint)))
-                        Console.WriteLine(paint);
-
-                    Console.WriteLine("\nEnter the material of the painting:");
-                    Paint material = Paint.None;
-                    string userMaterial;
-
-                    while (true)
-                    {
-                        userMaterial = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(userMaterial) || (Enum.TryParse(userMaterial, out material)))
-                            break;
-                        Console.WriteLine("Invalid material. Please enter a valid material from the list.");
-                    }
-
-                    artObjects.Add(artist.CreateArtObject(id, name, yearOfCreation, artist, canvasSize, stylePic, material));
-                    Console.WriteLine("Paintin was added");
-                }
-                //характеристики для скульптури
-                else if (choose == "2")
-                {
-                    float height;
-                    while (true)
-                    {
-                        Console.WriteLine("Enter the height of the sculpture: ");
-                        string heightInput = Console.ReadLine();
-                        if (float.TryParse(heightInput, out height) && !heightInput.Any(char.IsLetter))
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        if (input == 0)
                         {
-                            if (height < 0)
-                                Console.WriteLine("Height can't be < 0");
-                            else
-                                break;
+                            string nameArt;
+                            while (true)
+                            {
+                                Console.Write("Enter the name: ");
+                                nameArt = Console.ReadLine();
+                                if (!nameArt.Any(char.IsDigit) && nameArt.Length >= 2)
+                                    break;
+                                Console.WriteLine("Name cannot contain digits and must be at least two characters long");
+                            }
+
+                            string surname;
+                            while (true)
+                            {
+                                Console.Write("Enter the surname: ");
+                                surname = Console.ReadLine();
+                                if (!surname.Any(char.IsDigit) && surname.Length >= 2)
+                                    break;
+                                Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
+                            }
+
+                            int birthYear;
+                            while (true)
+                            {
+                                Console.Write("Enter the birth year: ");
+                                string birthYearInput = Console.ReadLine();
+                                if (Int32.TryParse(birthYearInput, out birthYear) && birthYear >= 0)
+                                    break;
+                                Console.WriteLine("Birth year must be a non-negative integer");
+                            }
+
+                            int? deathYear = null;
+                            while (true)
+                            {
+                                Console.Write("Enter the death year (or leave it blank if the artist is still alive): ");
+                                string deathYearInput = Console.ReadLine();
+                                if (string.IsNullOrEmpty(deathYearInput))
+                                    break;
+                                else
+                                {
+                                    if (Int32.TryParse(deathYearInput, out int tempDeathYear) && tempDeathYear >= birthYear)
+                                    {
+                                        deathYear = tempDeathYear;
+                                        break;
+                                    }
+                                    Console.WriteLine("Death year must be a non-negative integer and not less than the birth year");
+                                }
+                            }
+
+                            Artist newArtist = new Artist(nameArt, surname, birthYear, deathYear);
+                            artists.Add(newArtist);
+                            Console.WriteLine("Artist was added");
+                            artist = newArtist;
+                            break;
+                        }
+                        else if (input > 0 && input <= artists.Count)
+                        {
+                            artist = artists[input - 1];
+                            break;
                         }
                         else
-                            Console.WriteLine("Height must be a number and should not contain letters");
+                            Console.WriteLine("Invalid input. Please try again.");
                     }
 
-                    float weight;
-                    while (true)
+                    //характеристики для картини
+                    if (choose == "1")
                     {
-                        Console.WriteLine("Enter the weight of the sculpture: ");
-                        string weightInput = Console.ReadLine();
-                        if (float.TryParse(weightInput, out weight) && !weightInput.Any(char.IsLetter))
+                        Console.WriteLine("Enter the canvas size of the painting: ");
+                        string canvasSize = Console.ReadLine();
+
+                        //вивід можливих варіантів для обрання стилю
+                        Console.WriteLine("\nStyle:");
+                        foreach (Style style in Enum.GetValues(typeof(Style)))
                         {
-                            if (weight < 0)
-                                Console.WriteLine("Weight can't be < 0");
-                            else
-                                break;
+                            if (style == Style.None)
+                                continue;
+                            Console.WriteLine(style);
                         }
-                        else
-                            Console.WriteLine("Weight must be a number and should not contain letters");
+
+                        Console.WriteLine("\nEnter the style of the painting:");
+                        Style stylePic = Style.None;
+                        string userStyle;
+
+                        while (true)
+                        {
+                            userStyle = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(userStyle) || (Enum.TryParse(userStyle, out stylePic)))
+                                break;
+                            Console.WriteLine("Invalid style. Please enter a valid style from the list.");
+                        }
+
+                        //вивід можливих варіантів для обрання матеріалів
+                        Console.WriteLine("\nMaterial:");
+                        foreach (Paint paint in Enum.GetValues(typeof(Paint)))
+                        {
+                            if (paint == Paint.None)
+                                continue;
+                            Console.WriteLine(paint);
+                        }
+
+                        Console.WriteLine("\nEnter the material of the painting:");
+                        Paint material = Paint.None;
+                        string userMaterial;
+
+                        while (true)
+                        {
+                            userMaterial = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(userMaterial) || (Enum.TryParse(userMaterial, out material)))
+                                break;
+                            Console.WriteLine("Invalid material. Please enter a valid material from the list.");
+                        }
+
+                        artObjects.Add(artist.CreateArtObject(id, name, yearOfCreation, artist, canvasSize, stylePic, material));
+                        Console.WriteLine("Paintin was added");
                     }
-
-                    //вивід можливих варіантів для обрання матеріалу
-                    Console.WriteLine("\nMaterial:");
-                    foreach (Materials material in Enum.GetValues(typeof(Materials)))
-                        Console.WriteLine(material);
-
-                    Console.WriteLine("\nEnter the material of the sculpture:");
-                    Materials sculptureMaterial = Materials.None;
-                    string userMaterial;
-
-                    while (true)
+                    //характеристики для скульптури
+                    else if (choose == "2")
                     {
-                        userMaterial = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(userMaterial) || (Enum.TryParse(userMaterial, out sculptureMaterial)))
-                            break;
-                        Console.WriteLine("Invalid material. Please enter a valid material from the list.");
+                        float height;
+                        while (true)
+                        {
+                            Console.WriteLine("Enter the height of the sculpture: ");
+                            string heightInput = Console.ReadLine();
+                            if (float.TryParse(heightInput, out height) && !heightInput.Any(char.IsLetter))
+                            {
+                                if (height < 0)
+                                    Console.WriteLine("Height can't be < 0");
+                                else
+                                    break;
+                            }
+                            else
+                                Console.WriteLine("Height must be a number and should not contain letters");
+                        }
+
+                        float weight;
+                        while (true)
+                        {
+                            Console.WriteLine("Enter the weight of the sculpture: ");
+                            string weightInput = Console.ReadLine();
+                            if (float.TryParse(weightInput, out weight) && !weightInput.Any(char.IsLetter))
+                            {
+                                if (weight < 0)
+                                    Console.WriteLine("Weight can't be < 0");
+                                else
+                                    break;
+                            }
+                            else
+                                Console.WriteLine("Weight must be a number and should not contain letters");
+                        }
+
+                        //вивід можливих варіантів для обрання матеріалу
+                        Console.WriteLine("\nMaterial:");
+                        foreach (Materials material in Enum.GetValues(typeof(Materials)))
+                        {
+                            if (material == Materials.None)
+                                continue;
+                            Console.WriteLine(material);
+                        }
+
+                        Console.WriteLine("\nEnter the material of the sculpture:");
+                        Materials sculptureMaterial = Materials.None;
+                        string userMaterial;
+
+                        while (true)
+                        {
+                            userMaterial = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(userMaterial) || (Enum.TryParse(userMaterial, out sculptureMaterial)))
+                                break;
+                            Console.WriteLine("Invalid material. Please enter a valid material from the list.");
+                        }
+
+                        //вивід можливих варіантів для обрання методу створення
+                        Console.WriteLine("\nMethod of Creation:");
+                        foreach (MethodOfCreation creation in Enum.GetValues(typeof(MethodOfCreation)))
+                        {
+                            if (creation == MethodOfCreation.None)
+                                continue;
+                            Console.WriteLine(creation);
+                        }
+
+                        Console.WriteLine("\nEnter the method of creation of the sculpture:");
+                        MethodOfCreation methodOfCreation = MethodOfCreation.None;
+                        string userMethod;
+
+                        while (true)
+                        {
+                            userMethod = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(userMethod) || (Enum.TryParse(userMethod, out methodOfCreation)))
+                                break;
+                            Console.WriteLine("Invalid method. Please enter a valid method from the list.");
+                        }
+
+                        artObjects.Add(artist.CreateArtObject(id, name, yearOfCreation, artist, height, weight, sculptureMaterial, methodOfCreation));
+                        Console.WriteLine("Sculpture was added");
                     }
-
-                    //вивід можливих варіантів для обрання методу створення
-                    Console.WriteLine("\nMethod of Creation:");
-                    foreach (MethodOfCreation creation in Enum.GetValues(typeof(MethodOfCreation)))
-                        Console.WriteLine(creation);
-
-                    Console.WriteLine("\nEnter the method of creation of the sculpture:");
-                    MethodOfCreation methodOfCreation = MethodOfCreation.None;
-                    string userMethod;
-
-                    while (true)
-                    {
-                        userMethod = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(userMethod) || (Enum.TryParse(userMethod, out methodOfCreation)))
-                            break;
-                        Console.WriteLine("Invalid method. Please enter a valid method from the list.");
-                    }
-
-                    artObjects.Add(artist.CreateArtObject(id, name, yearOfCreation, artist, height, weight, sculptureMaterial, methodOfCreation));
-                    Console.WriteLine("Sculpture was added");
                 }
-            }
-            catch (Exception ex){
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
             }
         }
 
         //метод для генерації нового витвору мистецтва
-        public static void GenerateArtObjectsAndArtists(int numberOfArtists, int numberOfArtObjectsPerArtist)
+        public static void GenerateArtObjectsAndArtists(int numberOfArtists)
         {
             Random random = new Random();
             string[] names = { "Vincent", "Pablo", "Leonardo", "Michelangelo", "Raphael" };
@@ -439,7 +556,7 @@ namespace Project
                 Artist artist = new Artist(name, surname, birthYear, deathYear);
                 artists.Add(artist);
 
-                for (int j = 0; j < numberOfArtObjectsPerArtist; j++)
+                for (int j = 0; j < 2; j++) //по два арт об'єкти на одного митця
                 {
                     int id = j;
                     string artObjectName = $"Art Object {j}";
@@ -473,130 +590,151 @@ namespace Project
         //метод для додавання нового місця проведення
         public static void AddPlace()
         {
-            List<ArtObject> artworks = new List<ArtObject>();
-            string name;
+            Console.WriteLine("Enter the number of venues you want to create: ");
+            int numArtObjects;
             while (true)
             {
-                Console.Write("Enter the name: ");
-                name = Console.ReadLine();
-                if (!name.Any(char.IsDigit) && name.Length >= 2)
+                string numArtObjectsInput = Console.ReadLine();
+                if (int.TryParse(numArtObjectsInput, out numArtObjects) && numArtObjects > 0)
                     break;
-                Console.WriteLine("Name cannot contain digits and must be at least two characters long");
+                else
+                    Console.WriteLine("Number must be a positive integer");
             }
 
-            string address;
-            while (true)
+            for (int i = 0; i < numArtObjects; i++)
             {
-                Console.Write("Enter the address: ");
-                address = Console.ReadLine();
-                if (address.Length >= 5)
-                    break;
-                Console.WriteLine("Address must be at least five characters long");
-            }
-
-            //обираємо власника зі списку або додаємо нового
-            Owner ownerObj;
-            while (true)
-            {
-                Console.WriteLine("Please select the number of the owner or enter 0 to add a new one:");
-                for (int i = 0; i < owners.Count; i++)
-                    Console.WriteLine($"{i + 1}. {owners[i].Name} {owners[i].Surname}");
-
-                int input = Convert.ToInt32(Console.ReadLine());
-                if (input == 0)
+                try
                 {
-                    string nameOwn;
+                    List<ArtObject> artworks = new List<ArtObject>();
+                    string name;
                     while (true)
                     {
                         Console.Write("Enter the name: ");
-                        nameOwn = Console.ReadLine();
-                        if (!nameOwn.Any(char.IsDigit) && nameOwn.Length >= 2)
+                        name = Console.ReadLine();
+                        if (!name.Any(char.IsDigit) && name.Length >= 2)
                             break;
                         Console.WriteLine("Name cannot contain digits and must be at least two characters long");
                     }
 
-                    string surname;
+                    string address;
                     while (true)
                     {
-                        Console.Write("Enter the surname: ");
-                        surname = Console.ReadLine();
-                        if (!surname.Any(char.IsDigit) && surname.Length >= 2)
+                        Console.Write("Enter the address: ");
+                        address = Console.ReadLine();
+                        if (address.Length >= 5)
                             break;
-                        Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
+                        Console.WriteLine("Address must be at least five characters long");
                     }
 
-                    int age;
+                    //обираємо власника зі списку або додаємо нового
+                    Owner ownerObj;
                     while (true)
                     {
-                        Console.Write("Enter the age: ");
-                        string ageInput = Console.ReadLine();
-                        if (Int32.TryParse(ageInput, out age) && age >= 0)
+                        Console.WriteLine("Please select the number of the owner or enter 0 to add a new one:");
+                        for (int j = 0; j < owners.Count; j++)
+                            Console.WriteLine($"{j + 1}. {owners[j].Name} {owners[j].Surname}");
+
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        if (input == 0)
+                        {
+                            string nameOwn;
+                            while (true)
+                            {
+                                Console.Write("Enter the name: ");
+                                nameOwn = Console.ReadLine();
+                                if (!nameOwn.Any(char.IsDigit) && nameOwn.Length >= 2)
+                                    break;
+                                Console.WriteLine("Name cannot contain digits and must be at least two characters long");
+                            }
+
+                            string surname;
+                            while (true)
+                            {
+                                Console.Write("Enter the surname: ");
+                                surname = Console.ReadLine();
+                                if (!surname.Any(char.IsDigit) && surname.Length >= 2)
+                                    break;
+                                Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
+                            }
+
+                            int age;
+                            while (true)
+                            {
+                                Console.Write("Enter the age: ");
+                                string ageInput = Console.ReadLine();
+                                if (Int32.TryParse(ageInput, out age) && age >= 0)
+                                    break;
+                                Console.WriteLine("Age must be a non-negative integer");
+                            }
+
+                            Owner newOwner = new Owner(nameOwn, surname, age);
+                            owners.Add(newOwner);
+                            Console.WriteLine("Owner was added");
+                            ownerObj = newOwner;
                             break;
-                        Console.WriteLine("Age must be a non-negative integer");
+                        }
+                        else if (input > 0 && input <= owners.Count)
+                        {
+                            ownerObj = owners[input - 1];
+                            break;
+                        }
+                        else
+                            Console.WriteLine("Invalid input. Please try again.");
                     }
 
-                    Owner newOwner = new Owner(nameOwn, surname, age);
-                    owners.Add(newOwner);
-                    Console.WriteLine("Owner was added");
-                    ownerObj = newOwner;
-                    break;
-                }
-                else if (input > 0 && input <= owners.Count)
-                {
-                    ownerObj = owners[input - 1];
-                    break;
-                }
-                else
-                    Console.WriteLine("Invalid input. Please try again.");
-            }
+                    //вивід доступних арт об'єктів які можна додати до галереї/музею
+                    Console.WriteLine("Select art objects:");
+                    for (int j = 0; j < artObjects.Count; j++)
+                    {
+                        if (!artObjects[i].IsInVenue)
+                            Console.WriteLine($"{j + 1}. {artObjects[j].Name}");
+                    }
 
-            //вивід доступних арт об'єктів які можна додати до галереї/музею
-            Console.WriteLine("Select art objects:");
-            for (int i = 0; i < artObjects.Count; i++)
-            {
-                if (!artObjects[i].IsInVenue)
-                    Console.WriteLine($"{i + 1}. {artObjects[i].Name}");
-            }
-            
-            //вибір та додання робіт до нового об'єкту
-            while (true)
-            {
-                Console.Write("Enter the number of the art object or 'q' to finish: ");
-                string input = Console.ReadLine();
-                if (input.ToLower() == "q")
-                    break;
+                    //вибір та додання робіт до нового об'єкту
+                    while (true)
+                    {
+                        Console.Write("Enter the number of the art object or 'q' to finish: ");
+                        string input = Console.ReadLine();
+                        if (input.ToLower() == "q")
+                            break;
 
-                int index;
-                if (int.TryParse(input, out index) && index > 0 && index <= artObjects.Count && !artObjects[index - 1].IsInVenue)
-                {
-                    artworks.Add(artObjects[index - 1]);
-                    artObjects[index - 1].IsInVenue = true;
-                }
-                else
-                    Console.WriteLine("Invalid choice, please try again");
-            }
+                        int index;
+                        if (int.TryParse(input, out index) && index > 0 && index <= artObjects.Count && !artObjects[index - 1].IsInVenue)
+                        {
+                            artworks.Add(artObjects[index - 1]);
+                            artObjects[index - 1].IsInVenue = true;
+                        }
+                        else
+                            Console.WriteLine("Invalid choice, please try again");
+                    }
 
-            bool isMuseum;
-            while (true)
-            {
-                Console.Write("Is it a museum? (y/n): ");
-                string input = Console.ReadLine().ToLower();
-                if (input == "y")
-                {
-                    isMuseum = true;
-                    break;
-                }
-                else if (input == "n")
-                {
-                    isMuseum = false;
-                    break;
-                }
-                else
-                    Console.WriteLine("Invalid choice, please try again");
-            }
+                    bool isMuseum;
+                    while (true)
+                    {
+                        Console.Write("Is it a museum? (y/n): ");
+                        string input = Console.ReadLine().ToLower();
+                        if (input == "y")
+                        {
+                            isMuseum = true;
+                            break;
+                        }
+                        else if (input == "n")
+                        {
+                            isMuseum = false;
+                            break;
+                        }
+                        else
+                            Console.WriteLine("Invalid choice, please try again");
+                    }
 
-            venues.Add(ownerObj.AddPlace(name, address, ownerObj, artworks, isMuseum));
-            Console.WriteLine("Place was added");
+                    venues.Add(ownerObj.AddPlace(name, address, ownerObj, artworks, isMuseum));
+                    Console.WriteLine("Place was added");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+            }
         }
 
         //метод для генерації нового місця проведення
@@ -687,100 +825,121 @@ namespace Project
             }
         }
 
-        ////метод для додавання виставки
+        //метод для додавання виставки
         public static void AddExhibition()
         {
-            //обрання куратора або додання нового
-            Curator selectedCurator;
+            Console.WriteLine("Enter the number of exhibitions you want to create: ");
+            int numArtObjects;
             while (true)
             {
-                Console.WriteLine("Please select the number of the curator or enter 0 to add a new one:");
-                for (int i = 0; i < curators.Count; i++)
-                    Console.WriteLine($"{i + 1}. {curators[i].Name}");
-
-                int input = Convert.ToInt32(Console.ReadLine());
-                if (input == 0)
-                {
-                    string name;
-                    while (true)
-                    {
-                        Console.Write("Enter the name: ");
-                        name = Console.ReadLine();
-                        if (!name.Any(char.IsDigit) && name.Length >= 2)
-                            break;
-                        Console.WriteLine("Name cannot contain digits and must be at least two characters long");
-                    }
-
-                    string surname;
-                    while (true)
-                    {
-                        Console.Write("Enter the surname: ");
-                        surname = Console.ReadLine();
-                        if (!surname.Any(char.IsDigit) && surname.Length >= 2)
-                            break;
-                        Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
-                    }
-
-                    int age;
-                    while (true)
-                    {
-                        Console.Write("Enter the age: ");
-                        string ageInput = Console.ReadLine();
-                        if (Int32.TryParse(ageInput, out age) && age >= 0)
-                            break;
-                        Console.WriteLine("Age must be a non-negative integer");
-                    }
-
-                    Curator newCurator = new Curator(name, surname, age);
-                    curators.Add(newCurator);
-                    selectedCurator = newCurator;
+                string numArtObjectsInput = Console.ReadLine();
+                if (int.TryParse(numArtObjectsInput, out numArtObjects) && numArtObjects > 0)
                     break;
-                }
-                else if (input > 0 && input <= curators.Count)
-                {
-                    selectedCurator = curators[input - 1];
-                    break;
-                }
                 else
-                    Console.WriteLine("Invalid input. Please try again.");
+                    Console.WriteLine("Number must be a positive integer");
             }
 
-            //обрання місця проведення
-            IPresentable selectedPlace;
-            while (true)
+            for (int i = 0; i < numArtObjects; i++)
             {
-                Console.WriteLine("Please select the number of the place:");
-                for (int i = 0; i < venues.Count; i++)
-                    Console.WriteLine($"{i + 1}. {venues[i].Name}");
-
-                int input = Convert.ToInt32(Console.ReadLine());
-                if (input > 0 && input <= venues.Count)
+                try
                 {
-                    selectedPlace = venues[input - 1];
-                    break;
+                    //обрання куратора або додання нового
+                    Curator selectedCurator;
+                    while (true)
+                    {
+                        Console.WriteLine("Please select the number of the curator or enter 0 to add a new one:");
+                        for (int j = 0; j < curators.Count; j++)
+                            Console.WriteLine($"{j + 1}. {curators[j].Name}");
+
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        if (input == 0)
+                        {
+                            string name;
+                            while (true)
+                            {
+                                Console.Write("Enter the name: ");
+                                name = Console.ReadLine();
+                                if (!name.Any(char.IsDigit) && name.Length >= 2)
+                                    break;
+                                Console.WriteLine("Name cannot contain digits and must be at least two characters long");
+                            }
+
+                            string surname;
+                            while (true)
+                            {
+                                Console.Write("Enter the surname: ");
+                                surname = Console.ReadLine();
+                                if (!surname.Any(char.IsDigit) && surname.Length >= 2)
+                                    break;
+                                Console.WriteLine("Surname cannot contain digits and must be at least two characters long");
+                            }
+
+                            int age;
+                            while (true)
+                            {
+                                Console.Write("Enter the age: ");
+                                string ageInput = Console.ReadLine();
+                                if (Int32.TryParse(ageInput, out age) && age >= 0)
+                                    break;
+                                Console.WriteLine("Age must be a non-negative integer");
+                            }
+
+                            Curator newCurator = new Curator(name, surname, age);
+                            curators.Add(newCurator);
+                            selectedCurator = newCurator;
+                            break;
+                        }
+                        else if (input > 0 && input <= curators.Count)
+                        {
+                            selectedCurator = curators[input - 1];
+                            break;
+                        }
+                        else
+                            Console.WriteLine("Invalid input. Please try again.");
+                    }
+
+                    //обрання місця проведення
+                    IPresentable selectedPlace;
+                    while (true)
+                    {
+                        Console.WriteLine("Please select the number of the place:");
+                        for (int j = 0; j < venues.Count; j++)
+                            Console.WriteLine($"{j + 1}. {venues[j].Name}");
+
+                        int input = Convert.ToInt32(Console.ReadLine());
+                        if (input > 0 && input <= venues.Count)
+                        {
+                            selectedPlace = venues[input - 1];
+                            break;
+                        }
+                        else
+                            Console.WriteLine("Invalid input. Please try again.");
+                    }
+
+                    Console.WriteLine("Please enter the name of the exhibition:");
+                    string nameEx = Console.ReadLine();
+
+                    DateTime startDate, endDate;
+                    while (true)
+                    {
+                        Console.WriteLine("Please enter the start date of the exhibition (yyyy-mm-dd):");
+                        if (DateTime.TryParse(Console.ReadLine(), out startDate))
+                        {
+                            Console.WriteLine("Please enter the end date of the exhibition (yyyy-mm-dd):");
+                            if (DateTime.TryParse(Console.ReadLine(), out endDate) && endDate >= startDate)
+                                break;
+                        }
+                        Console.WriteLine("Invalid input. Please try again.");
+                    }
+
+                    exhibitions.Add(selectedCurator.AddExhibition(nameEx, startDate, endDate, selectedPlace, null));
+                    Console.WriteLine("Exhibition was added");
                 }
-                else
-                    Console.WriteLine("Invalid input. Please try again.");
-            }
-
-            Console.WriteLine("Please enter the name of the exhibition:");
-            string nameEx = Console.ReadLine();
-
-            DateTime startDate, endDate;
-            while (true)
-            {
-                Console.WriteLine("Please enter the start date of the exhibition (yyyy-mm-dd):");
-                if (DateTime.TryParse(Console.ReadLine(), out startDate))
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Please enter the end date of the exhibition (yyyy-mm-dd):");
-                    if (DateTime.TryParse(Console.ReadLine(), out endDate) && endDate >= startDate)
-                        break;
+                    Console.WriteLine($"An error occurred: {ex.Message}");
                 }
-                Console.WriteLine("Invalid input. Please try again.");
             }
-
-            exhibitions.Add(selectedCurator.AddExhibition(nameEx, startDate, endDate, selectedPlace, null));
-            Console.WriteLine("Exhibition was added");
         }
 
         //метод для генерації виставки
