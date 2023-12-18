@@ -35,7 +35,7 @@ namespace Project.Organization
         {
             int artObjectCount = ExhibitionObjects.Count;
 
-            Console.WriteLine($"Exhibition: Name={Name}, StartDate={StartDate}, EndDate={EndDate}, Place={Place}, Number of ArtObjects={artObjectCount}");
+            Console.WriteLine($"Exhibition: Name={Name}, StartDate={StartDate}, EndDate={EndDate}, Place={Place.Name}, Number of ExhibitionObjects={artObjectCount}");
         }
 
         // Додавання нового об'єкта мистецтва до виставки

@@ -68,6 +68,5 @@ namespace Project.Organization
                 return false; // An error occurred
             }
         }
-
     }
 }

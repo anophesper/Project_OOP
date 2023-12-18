@@ -445,10 +445,10 @@ namespace Project
                     string artObjectName = $"Art Object {j}";
                     int? yearOfCreation = random.Next(1900, 2020);
 
-                    // Randomly choose to create a sculpture or a painting
+                    //Випадково обирає для створення скульптуру чи картину
                     if (random.Next(2) == 0)
                     {
-                        // Create a sculpture
+                        //Створює скульптуру
                         float height = (float)random.NextDouble() * 100;
                         float weight = (float)random.NextDouble() * 100;
                         Materials material = (Materials)random.Next(Enum.GetNames(typeof(Materials)).Length);
@@ -458,7 +458,7 @@ namespace Project
                     }
                     else
                     {
-                        // Create a painting
+                        //Створює картину
                         string canvasSize = $"{random.Next(1, 100)}x{random.Next(1, 100)}";
                         Style stylePic = (Style)random.Next(Enum.GetNames(typeof(Style)).Length);
                         Paint material = (Paint)random.Next(Enum.GetNames(typeof(Paint)).Length);
@@ -466,8 +466,8 @@ namespace Project
                         artObjects.Add(artist.CreateArtObject(id, artObjectName, yearOfCreation, artist, canvasSize, stylePic, material));
                     }
                 }
-                Console.WriteLine("Objects were generated");
             }
+            Console.WriteLine("Objects were generated");
         }
 
         //метод для додавання нового місця проведення
@@ -627,14 +627,14 @@ namespace Project
 
                 for (int j = 0; j < artObjects.Count; j++)
                 {
-                    if (!artObjects[j].IsInVenue && random.NextDouble() < 0.5) // 50% chance to add each art object
+                    if (!artObjects[j].IsInVenue && random.NextDouble() < 0.5) //50% шанс додати кожен об'єкт
                     {
                         artworks.Add(artObjects[j]);
                         artObjects[j].IsInVenue = true;
                     }
                 }
 
-                bool isMuseum = random.NextDouble() < 0.5; // 50% chance to be a museum
+                bool isMuseum = random.NextDouble() < 0.5; // 50% шанс бути музеєм
 
                 venues.Add(ownerObj.AddPlace(name, address, ownerObj, artworks, isMuseum));
             }
@@ -793,17 +793,17 @@ namespace Project
 
             for (int i = 0; i < numberOfExhibitions; i++)
             {
-                // Generate curator
+                //генерує куратора
                 string name = names[random.Next(names.Length)];
                 string surname = surnames[random.Next(surnames.Length)];
                 int age = random.Next(25, 50);
                 Curator curator = new Curator(name, surname, age);
                 curators.Add(curator);
 
-                // Select place
+                //генерує місце
                 IPresentable place = venues[random.Next(venues.Count)];
 
-                // Generate exhibition
+                //генерує виставку
                 string exhibitionName = exhibitionNames[random.Next(exhibitionNames.Length)];
                 DateTime startDate = DateTime.Today.AddDays(random.Next(-365, 365));
                 DateTime endDate = startDate.AddDays(random.Next(1, 30));
@@ -845,10 +845,10 @@ namespace Project
                 {
                     case "1":
                         AddArtworkToExhibition(selectedExhibition);
-                        break;
+                        return;
                     case "2":
                         ChangeDataExhebition(selectedExhibition);
-                        break;
+                        return;
                     default:
                         Console.WriteLine("Invalid choice, please try again");
                         break;
@@ -861,26 +861,30 @@ namespace Project
         {
             // Виведення списку доступних арт-об'єктів, які можна додати до виставки
             Console.WriteLine("Select an art object:");
-            List<ArtObject> availableArtObjects = selectedExhibition.Place.ArtWorks.Where(a => !a.IsInVenue).ToList();
+            List<ArtObject> availableArtObjects = artObjects.Where(a => !a.IsInVenue).ToList();
             for (int i = 0; i < availableArtObjects.Count; i++)
                 Console.WriteLine($"{i + 1}. {availableArtObjects[i].Name}");
 
             // Вибір та додавання арт-об'єктів
             while (true)
             {
-                Console.Write("Введіть номер арт-об'єкта або 'q' для завершення: ");
+                Console.Write("Enter the number of the art object or 'q' to finish: ");
                 string input = Console.ReadLine();
-                if (input.ToLower() == "q")
-                    break;
-
-                int index;
-                if (int.TryParse(input, out index) && index > 0 && index <= availableArtObjects.Count)
+                while (true)
                 {
-                    selectedExhibition.AddArtObject(availableArtObjects[index - 1]);
-                    Console.WriteLine("Artwork was added");
+                    if (input.ToLower() == "q")
+                        return;
+
+                    int index;
+                    if (int.TryParse(input, out index) && index > 0 && index <= availableArtObjects.Count)
+                    {
+                        selectedExhibition.AddArtObject(availableArtObjects[index - 1]);
+                        Console.WriteLine("Artwork was added");
+                        break;
+                    }
+                    else
+                        Console.WriteLine("Invalid choice, please try again");
                 }
-                else
-                    Console.WriteLine("Invalid choice, please try again");
             }
         }
 
